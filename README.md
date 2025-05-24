@@ -64,15 +64,24 @@ Résultat dans la base de données :
 ![illustrations](images/bd_in_navigator4_productContent.png)
 
 Pour la gestion du projet, on utilise toujours ProductRepository pour afficher les produits et effectuer des recherches dans la table à l’aide de méthodes déjà définies comme findAll(), findByName(), findByNameContains(), etc.
+
 ![illustrations](images/methods.png)
+
 les methodes :
+
 ![illustrations](images/methods1.png)
+
 la methode search donne les meme resultat qye find by name 
+
 ```
 @Query("select p from Product p where p.name like :x and p.price>:y")
 List<Product> search(@Param(x) String kw,@Param(y) Double price);
 ```
+
+
 Application:
+
+
 ```
         System.out.println("---- Résultats de search() : ------");
 
@@ -84,8 +93,55 @@ Application:
             System.out.println(prod.toString());
         });```
 ```
+
+
 Resultats :
+
+
+
 ![illustrations](images/search.png)
 
-## 
+
+
+## Application Web – Exposition de services REST
+
+
+Pour créer un service web REST avec Spring Boot, il suffit d’annoter une classe avec `@RestController`.  
+Dans notre cas, la classe `ProductRestController` permet d’exposer des endpoints HTTP permettant d'accéder aux données des produits.
+
+L'accès à la base de données se fait via une interface `ProductRepository`, injectée automatiquement grâce à l'annotation `@Autowired`.
+
+Nous avons défini une méthode `products()` qui retourne la liste des produits stockés en base de données au format JSON, en s'appuyant sur la méthode `findAll()` de Spring Data JPA.  
+Cette méthode est exposée via l'URL `/products` à l’aide de l’annotation `@GetMapping`.
+
+##### Exemple de code pour exposer les produits au format JSON :
+
+Code source affichant les produits au format JSON :
+
+![illustrations](images/jsoncode.png)
+
+Affichage JSON avec products() :
+
+![illustrations](images/findalljson.png)
+
+
+Affichage JSON avec productById() :
+
+![illustrations](images/jsonwithid.png)
+Lorsque l’ID demandé n’existe pas, deux approches sont possibles :
+
+Générer une exception automatiquement :
+
+```        return productRepository.findById(id).orElseThrow();
+```
+Retourner null si aucun produit n’est trouvé :
+
+```        return productRepository.findById(id).orElse(null);
+```
+ 
+###Conclusion:
+Avec Spring Boot, on peut créer des web services REST de manière très simple et efficace.
+Il n’est pas nécessaire d’écrire beaucoup de code.
+La plupart des fonctionnalités sont gérées automatiquement grâce à un ensemble puissant d’annotations.
+Il est donc essentiel de bien comprendre et maîtriser ces annotations pour tirer pleinement parti du framework.
 
